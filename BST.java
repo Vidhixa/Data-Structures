@@ -18,8 +18,16 @@ class Solution {
         //printInorder(root);
         //System.out.println(height(root)); 
         
-        insertInBST(root, 18);
-            
+        //insertInBST(root, 18);
+        
+        //Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        //queue.add(root);
+        //printLevelOrder(queue);
+        
+        deleteRec(root, 7);
+
+        //deleteInBST(root, 7);
+        
         Queue<TreeNode> queue = new LinkedList<TreeNode>();
         queue.add(root);
         printLevelOrder(queue);
@@ -71,19 +79,106 @@ class Solution {
         return root;
     }
     
-    public void deleteInBST(TreeNode root, int val) {
+    TreeNode deleteRec(TreeNode root, int key)
+    {
+        /* Base Case: If the tree is empty */
+        if (root == null)
+            return root;
+ 
+        /* Otherwise, recur down the tree */
+        if (key < root.val)
+            root.left = deleteRec(root.left, key);
+        else if (key > root.val)
+            root.right = deleteRec(root.right, key);
+ 
+        // if key is same as root's 
+        // key, then This is the
+        // node to be deleted
+        else {
+            // node with only one child or no child
+            if (root.left == null)
+                return root.right;
+            else if (root.right == null)
+                return root.left;
+ 
+            // node with two children: Get the inorder
+            // successor (smallest in the right subtree)
+            root.val = minValue(root.right);
+ 
+            // Delete the inorder successor
+            root.right = deleteRec(root.right, root.val);
+        }
+ 
+        return root;
+    }
+ 
+    int minValue(TreeNode root)
+    {
+        int minv = root.val;
+        while (root.left != null) 
+        {
+            minv = root.left.val;
+            root = root.left;
+        }
+        return minv;
+    }
+    
+    // Deleting a node in the three
+    public TreeNode deleteInBST(TreeNode root, int val) {
+        // Node does not exist and we have reached the end
         if(root == null) {
-            root = new TreeNode(val);
+            System.out.println("It is null");
             return root;
         }
         
-        if(val > root.val) {
-            root.right = insertInBST(root.right, val);
+        // Node found; now check the subtree existence
+        if(root.val == val) {
+            // If none, then delete the node by assigning it null
+            if(root.left == null && root.right == null) {
+                System.out.println("Both null " + root.val);
+                return root;
+            }
+            
+            // If right is null then pull up entire left subtree
+            if(root.right == null) {
+                System.out.println("Right is null " + root.val);
+                return root.left;
+                
+            } // If left is null then pull up entire right subtree
+            else if(root.left == null) {
+                System.out.println("Left is null " + root.val);
+                return root.right;
+                
+            } // If both exist then pick one subtree to pull value from
+            // Here we pick right so we need to find min value on right side 
+            else {
+                root.val = minVal(root.right);
+                // once found, make that root and delete the node with min value
+                root.right = deleteInBST(root.right, root.val);     
+            }
+            
+        } // Now we will deal with situations where we still need to find the value 
+        else if(root.val > val) {
+            root.right = deleteInBST(root.right, val);
+            
         } else {
-            root.left = insertInBST(root.left, val);
+            root.left = deleteInBST(root.left, val);
         }
         
         return root;
+        
+    }
+    
+    // We call this by default when the left and right subtree is present during deletion
+    public int minVal(TreeNode root) {
+        if(root == null) 
+            return 0;
+        
+        if(root.left == null) {
+            System.out.println("Min value returned is " + root.val);
+            return root.val;
+        }
+        return minVal(root.left);
     }
     
     // Prints nodes on each level
