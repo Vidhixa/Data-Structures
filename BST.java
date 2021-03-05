@@ -66,25 +66,39 @@ class Solution {
         int nodeCount = 0;
         int treeHeight = height(root);
         
+        
         while(level < treeHeight) {
             Queue<TreeNode> childrenQ = new LinkedList<TreeNode>();
+            int prevVal = 0;
             
             while(!q.isEmpty()) {
                 TreeNode parentNode = q.poll();
+                // TODO uncomment when sure of how to execute
+                /*if(level % 2 == 1) {
+                    if(parentNode.val > prevVal) {
+                        prevVal = parentNode.val; 
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if(parentNode.val < prevVal) {
+                        prevVal = parentNode.val; 
+                    } else {
+                        return false;
+                    }
+                }
+                */
                 ++nodeCount;
-                System.out.println("Level " + level + " node " + parentNode.val);
                 
                 if(parentNode.left != null) {
                     childrenQ.add(parentNode.left);
                 }
-                
                 
                 if(parentNode.right != null) {
                     childrenQ.add(parentNode.right);
                 }
             }
             
-            System.out.println("Nodecount " + nodeCount + " Level " + level);
             
             if((nodeCount == 1 && level == 0) || 
                (nodeCount % 2 == 0 && level % 2 == 1) || 
@@ -97,8 +111,32 @@ class Solution {
             }
         }
         
-        return isEvenOdd;
-        
+        return isEvenOdd;  
+    }
+    
+    public boolean checkStrictIncDcr(Queue<TreeNode> childrenQ, int currentLevel) {
+        Queue<TreeNode> checkOrderQ = new LinkedList<TreeNode>();
+        checkOrderQ = childrenQ;
+        if(( currentLevel+1) % 2 == 1) {
+            // Decreasing check
+            TreeNode prev = checkOrderQ.poll();
+            while(!checkOrderQ.isEmpty()) {
+                TreeNode curr = checkOrderQ.poll();
+                if(curr.val > prev. val)
+                    return false;
+            }
+            return true;
+            
+        } else {
+            // Increasing check
+            TreeNode prev = checkOrderQ.poll();
+            while(!checkOrderQ.isEmpty()) {
+                TreeNode curr = checkOrderQ.poll();
+                if(curr.val < prev. val)
+                    return false;
+            }
+            return true;
+        }
     }
     
     // Inorder will be left, root and right
