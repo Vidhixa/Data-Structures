@@ -24,15 +24,15 @@ class Solution {
         //queue.add(root);
         //printLevelOrder(queue);
         
-        deleteRec(root, 7);
+        //deleteRec(root, 7);
 
         //deleteInBST(root, 7);
         
-        Queue<TreeNode> queue = new LinkedList<TreeNode>();
-        queue.add(root);
-        printLevelOrder(queue);
-        
-        return true;
+        //Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        //queue.add(root);
+        //printLevelOrder(queue);
+
+        return checkEvenOdd(root);
     }
     
     // Remember the auditorium analogy
@@ -48,6 +48,57 @@ class Solution {
         } else {
             return rightHeight + 1;
         }
+    }
+    
+    // Why can't this be recursive?
+    // How do you explain need for a queue
+    public boolean checkEvenOdd(TreeNode root) {
+        if(root == null)
+            return true;
+        
+        // Inital queue
+        Queue<TreeNode> q = new LinkedList<TreeNode>();
+        q.add(root);
+        
+        // Intialize variables needed during the traversal for count
+        boolean isEvenOdd = true;
+        int level = 0;
+        int nodeCount = 0;
+        int treeHeight = height(root);
+        
+        while(level < treeHeight) {
+            Queue<TreeNode> childrenQ = new LinkedList<TreeNode>();
+            
+            while(!q.isEmpty()) {
+                TreeNode parentNode = q.poll();
+                ++nodeCount;
+                System.out.println("Level " + level + " node " + parentNode.val);
+                
+                if(parentNode.left != null) {
+                    childrenQ.add(parentNode.left);
+                }
+                
+                
+                if(parentNode.right != null) {
+                    childrenQ.add(parentNode.right);
+                }
+            }
+            
+            System.out.println("Nodecount " + nodeCount + " Level " + level);
+            
+            if((nodeCount == 1 && level == 0) || 
+               (nodeCount % 2 == 0 && level % 2 == 1) || 
+               (nodeCount % 2 == 1 && level % 2 == 0)) {
+                ++level;
+                q = childrenQ;  
+                nodeCount = 0;
+            } else {
+                return false;
+            }
+        }
+        
+        return isEvenOdd;
+        
     }
     
     // Inorder will be left, root and right
